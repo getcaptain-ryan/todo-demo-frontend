@@ -50,6 +50,21 @@ Complete reference for all npm packages used in the project. Use this for:
 - ✅ Expected package.json structure
 - ✅ Version compatibility notes
 
+### 4. [JUSTFILE_REFERENCE.md](./JUSTFILE_REFERENCE.md) - **COMMAND SHORTCUTS**
+**Just Command Runner Reference**
+
+Complete reference for all Just commands available in the project. Use this for:
+- Quick command shortcuts for development
+- Docker and Docker Compose shortcuts
+- Common workflow automation
+- Understanding available commands
+
+**What's included:**
+- ✅ Installation instructions for Just
+- ✅ Complete command reference with descriptions
+- ✅ Common workflow examples
+- ✅ Troubleshooting tips
+
 ## 🚀 Quick Start Path
 
 **For the fastest setup, follow this order:**

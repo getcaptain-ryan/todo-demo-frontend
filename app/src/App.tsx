@@ -1,9 +1,9 @@
-import HelloWorld from './components/HelloWorld'
+import { KanbanBoard } from './components/kanban/KanbanBoard'
 
 function App() {
   return (
     <div className="min-h-screen bg-background">
-      <HelloWorld />
+      <KanbanBoard />
     </div>
   )
 }

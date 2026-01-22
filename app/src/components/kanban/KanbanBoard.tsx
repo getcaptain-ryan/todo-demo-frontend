@@ -1,56 +1,61 @@
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
 import { useState } from 'react'
+import { Loader2, AlertCircle } from 'lucide-react'
 import { KanbanColumn } from './KanbanColumn'
 import { TaskCard } from './TaskCard'
 import { useKanban } from '@/hooks/useKanban'
+import { Button } from '@/components/ui/button'
 import type { Task, TaskStatus } from '@/types'
-
-// Mock data for demonstration
-const MOCK_TASKS: Task[] = [
-  {
-    id: '1',
-    title: 'Design new landing page',
-    description: 'Create wireframes and mockups for the new landing page',
-    status: 'todo',
-    priority: 'high',
-    createdAt: '2024-01-20T10:00:00Z',
-    updatedAt: '2024-01-20T10:00:00Z',
-  },
-  {
-    id: '2',
-    title: 'Implement authentication',
-    description: 'Add JWT-based authentication to the API',
-    status: 'in-progress',
-    priority: 'high',
-    createdAt: '2024-01-19T14:30:00Z',
-    updatedAt: '2024-01-21T09:15:00Z',
-  },
-  {
-    id: '3',
-    title: 'Write unit tests',
-    description: 'Add test coverage for user service',
-    status: 'todo',
-    priority: 'medium',
-    createdAt: '2024-01-18T11:20:00Z',
-    updatedAt: '2024-01-18T11:20:00Z',
-  },
-  {
-    id: '4',
-    title: 'Deploy to production',
-    description: 'Deploy version 1.0 to production environment',
-    status: 'done',
-    priority: 'high',
-    createdAt: '2024-01-15T08:00:00Z',
-    updatedAt: '2024-01-20T16:45:00Z',
-  },
-]
 
 const COLUMNS: TaskStatus[] = ['todo', 'in-progress', 'done']
 
 export function KanbanBoard() {
-  const { tasks, moveTask, getTasksByStatus } = useKanban(MOCK_TASKS)
+  const {
+    tasks,
+    isLoading,
+    error,
+    refetch,
+    moveTask,
+    getTasksByStatus,
+  } = useKanban()
   const [activeTask, setActiveTask] = useState<Task | null>(null)
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-4 md:p-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+            <p className="text-muted-foreground">Loading your tasks...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="container mx-auto p-4 md:p-8">
+        <div className="rounded-lg border border-destructive bg-destructive/10 p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-destructive mb-1">Error Loading Tasks</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Failed to load tasks. Please try again.
+              </p>
+              <Button variant="outline" size="sm" onClick={() => refetch()}>
+                Retry
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const handleDragStart = (event: DragStartEvent) => {
     const task = tasks.find((t) => t.id === event.active.id)

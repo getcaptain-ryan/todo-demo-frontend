@@ -23,15 +23,41 @@ apiClient.interceptors.request.use(
   }
 )
 
-// Response interceptor
+// Response interceptor with enhanced error handling
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('authToken')
-      // Optionally redirect to login
+    // Handle different error types
+    if (error.response) {
+      // Server responded with error status
+      const status = error.response.status
+      const message = error.response.data?.message || error.message
+
+      switch (status) {
+        case 401:
+          localStorage.removeItem('authToken')
+          // Optionally redirect to login
+          break
+        case 404:
+          console.error('Resource not found:', message)
+          break
+        case 422:
+          console.error('Validation error:', error.response.data)
+          break
+        case 500:
+          console.error('Server error:', message)
+          break
+        default:
+          console.error('API error:', message)
+      }
+    } else if (error.request) {
+      // Request made but no response
+      console.error('Network error: No response from server')
+    } else {
+      // Error in request setup
+      console.error('Request error:', error.message)
     }
+
     return Promise.reject(error)
   }
 )

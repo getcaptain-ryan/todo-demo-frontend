@@ -1,25 +1,47 @@
 import { DndContext, DragOverlay } from '@dnd-kit/core'
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Loader2, AlertCircle } from 'lucide-react'
 import { KanbanColumn } from './KanbanColumn'
 import { TaskCard } from './TaskCard'
 import { useKanban } from '@/hooks/useKanban'
+import { useColumns } from '@/hooks/useKanbanQueries'
 import { Button } from '@/components/ui/button'
+import { COLUMN_STATUS_MAP } from '@/types'
 import type { Task, TaskStatus } from '@/types'
-
-const COLUMNS: TaskStatus[] = ['todo', 'in-progress', 'done']
 
 export function KanbanBoard() {
   const {
     tasks,
-    isLoading,
-    error,
-    refetch,
+    isLoading: isLoadingTasks,
+    error: tasksError,
+    refetch: refetchTasks,
     moveTask,
     getTasksByStatus,
   } = useKanban()
+
+  const {
+    data: backendColumns = [],
+    isLoading: isLoadingColumns,
+    error: columnsError,
+    refetch: refetchColumns,
+  } = useColumns()
+
   const [activeTask, setActiveTask] = useState<Task | null>(null)
+
+  // Transform backend columns to TaskStatus array, sorted by order
+  const columns = useMemo(() => {
+    return backendColumns
+      .sort((a, b) => a.order - b.order)
+      .map((col) => COLUMN_STATUS_MAP[col.id])
+      .filter((status): status is TaskStatus => status !== undefined)
+  }, [backendColumns])
+
+  // Combined loading state
+  const isLoading = isLoadingTasks || isLoadingColumns
+
+  // Combined error state
+  const error = tasksError || columnsError
 
   // Loading state
   if (isLoading) {
@@ -28,7 +50,7 @@ export function KanbanBoard() {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-            <p className="text-muted-foreground">Loading your tasks...</p>
+            <p className="text-muted-foreground">Loading your board...</p>
           </div>
         </div>
       </div>
@@ -43,11 +65,20 @@ export function KanbanBoard() {
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
             <div className="flex-1">
-              <h3 className="font-semibold text-destructive mb-1">Error Loading Tasks</h3>
+              <h3 className="font-semibold text-destructive mb-1">
+                Error Loading {tasksError ? 'Tasks' : 'Columns'}
+              </h3>
               <p className="text-sm text-muted-foreground mb-3">
-                Failed to load tasks. Please try again.
+                Failed to load {tasksError ? 'tasks' : 'columns'}. Please try again.
               </p>
-              <Button variant="outline" size="sm" onClick={() => refetch()}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  refetchTasks()
+                  refetchColumns()
+                }}
+              >
                 Retry
               </Button>
             </div>
@@ -74,7 +105,7 @@ export function KanbanBoard() {
     const newStatus = over.id as TaskStatus
 
     // Check if the drop target is a valid column
-    if (COLUMNS.includes(newStatus)) {
+    if (columns.includes(newStatus)) {
       moveTask(taskId, newStatus)
     }
 
@@ -93,7 +124,7 @@ export function KanbanBoard() {
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         {/* Kanban Columns */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {COLUMNS.map((status) => (
+          {columns.map((status) => (
             <KanbanColumn
               key={status}
               status={status}

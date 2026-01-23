@@ -9,6 +9,8 @@ import type {
   UpdateColumnRequest,
   Task,
   TaskStatus,
+} from '@/types'
+import {
   COLUMN_STATUS_MAP,
   STATUS_COLUMN_MAP,
 } from '@/types'

@@ -3,6 +3,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { cn } from '@/lib/utils'
 import { getColumnTitle, getColumnColor } from '@/lib/kanban-utils'
 import { TaskCard } from './TaskCard'
+import { AddTaskButton } from './AddTaskButton'
 import type { Task, TaskStatus } from '@/types'
 
 interface KanbanColumnProps {
@@ -20,13 +21,17 @@ export function KanbanColumn({ status, tasks }: KanbanColumnProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Column Header */}
-      <div className="mb-4 px-1">
-        <h2 className="text-lg font-semibold text-foreground">
-          {getColumnTitle(status)}
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
-        </p>
+      <div className="mb-4 px-1 flex items-start justify-between">
+        <div className="flex-1">
+          <h2 className="text-lg font-semibold text-foreground">
+            {getColumnTitle(status)}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
+          </p>
+        </div>
+        {/* Add Task Button */}
+        <AddTaskButton status={status} />
       </div>
 
       {/* Drop Zone */}

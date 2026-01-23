@@ -107,3 +107,20 @@ export const STATUS_COLUMN_MAP: Record<TaskStatus, number> = {
   'in-progress': 2,
   'done': 3,
 }
+
+// Task Creation Component Props
+export interface TaskCreateFormProps {
+  status: TaskStatus
+  onSuccess: () => void
+  onCancel: () => void
+}
+
+export interface TaskCreateDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  status: TaskStatus
+}
+
+export interface AddTaskButtonProps {
+  status: TaskStatus
+}

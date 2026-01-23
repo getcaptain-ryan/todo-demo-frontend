@@ -4,11 +4,9 @@ import type {
   BackendColumn,
   CreateTaskRequest,
   UpdateTaskRequest,
-  MoveTaskRequest,
   CreateColumnRequest,
   UpdateColumnRequest,
   Task,
-  TaskStatus,
 } from '@/types'
 import {
   COLUMN_STATUS_MAP,

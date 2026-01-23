@@ -1,7 +1,14 @@
 import axios from 'axios'
 
+// Log the baseURL to debug runtime environment variable injection
+const baseURL: string = 'VITE_API_BASE_URL_PLACEHOLDER';
+console.log('🔍 API Client Configuration:');
+console.log('  baseURL:', baseURL);
+console.log('  Expected: http://localhost:8000/api');
+console.log('  Match:', baseURL === 'http://localhost:8000/api');
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001/api',
+  baseURL: baseURL,
   headers: {
     'Content-Type': 'application/json',
   },

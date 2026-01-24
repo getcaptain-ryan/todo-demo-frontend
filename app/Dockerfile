@@ -4,8 +4,8 @@ FROM node:20-alpine AS deps
 # Install dependencies only when needed
 WORKDIR /app
 
-# Copy package files
-COPY package.json yarn.lock ./
+# Copy package files from app directory
+COPY app/package.json app/yarn.lock ./
 
 # Install dependencies with frozen lockfile
 RUN yarn install --frozen-lockfile --production=false
@@ -18,8 +18,8 @@ WORKDIR /app
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copy source code
-COPY . .
+# Copy source code from app directory
+COPY app/ .
 
 # Build the application
 RUN yarn build
@@ -28,13 +28,13 @@ RUN yarn build
 FROM nginx:alpine AS production
 
 # Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY app/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy entrypoint script for runtime environment variable injection
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY app/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 # Add healthcheck

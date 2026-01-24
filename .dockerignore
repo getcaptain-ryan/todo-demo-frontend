@@ -1,0 +1,38 @@
+# Ignore everything by default
+*
+
+# Allow the app directory
+!app/
+
+# But ignore these within app
+app/node_modules
+app/dist
+app/.git
+app/.gitignore
+app/.env
+app/.env.local
+app/.env.*.local
+app/*.log
+app/npm-debug.log*
+app/yarn-debug.log*
+app/yarn-error.log*
+app/.DS_Store
+app/.vscode
+app/.idea
+app/coverage
+app/*.md
+!app/README.md
+app/.eslintcache
+app/.prettierignore
+app/.prettierrc
+app/vitest.config.ts
+
+# Ignore code_plans directory
+code_plans/
+
+# Ignore root level files
+README.md
+justfile
+.git
+.gitignore
+

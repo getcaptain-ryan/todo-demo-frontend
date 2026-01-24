@@ -4,7 +4,8 @@ dockerfilePath = "app/Dockerfile"
 watchPatterns = ["app/**"]
 
 [deploy]
-startCommand = "nginx -g 'daemon off;'"
+# Don't override startCommand - let Docker ENTRYPOINT run docker-entrypoint.sh
+# which injects runtime environment variables before starting nginx
 healthcheckPath = "/health"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"

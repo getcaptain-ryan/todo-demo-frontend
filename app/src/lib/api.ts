@@ -1,7 +1,21 @@
 import axios from 'axios'
 
+// Support both Docker runtime injection and Vite build-time env vars
+// In production (Docker): use the placeholder that will be replaced by docker-entrypoint.sh
+// In development: use Vite env var or default to localhost:8001
+const baseURL: string = import.meta.env.PROD
+  ? 'VITE_API_BASE_URL_PLACEHOLDER'
+  : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001/api');
+
+// Debug logging only in development mode
+if (import.meta.env.DEV) {
+  console.log('🔍 API Client Configuration:');
+  console.log('  baseURL:', baseURL);
+  console.log('  Mode:', import.meta.env.MODE);
+}
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001/api',
+  baseURL: baseURL,
   headers: {
     'Content-Type': 'application/json',
   },

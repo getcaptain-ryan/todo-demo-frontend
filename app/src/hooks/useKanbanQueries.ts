@@ -97,7 +97,7 @@ export function useCreateTask() {
       return { previousTasks }
     },
 
-    onError: (err, newTask, context) => {
+    onError: (_err, _newTask, context) => {
       // Rollback on error
       if (context?.previousTasks) {
         queryClient.setQueryData(kanbanKeys.tasks(), context.previousTasks)
@@ -131,7 +131,12 @@ export function useUpdateTask() {
           kanbanKeys.tasks(),
           previousTasks.map((task) =>
             task.backendId === taskId
-              ? { ...task, ...data, updatedAt: new Date().toISOString() }
+              ? {
+                  ...task,
+                  ...data,
+                  description: data.description ?? undefined,
+                  updatedAt: new Date().toISOString()
+                }
               : task
           )
         )
@@ -140,7 +145,7 @@ export function useUpdateTask() {
       return { previousTasks }
     },
 
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       if (context?.previousTasks) {
         queryClient.setQueryData(kanbanKeys.tasks(), context.previousTasks)
       }
@@ -176,7 +181,7 @@ export function useDeleteTask() {
       return { previousTasks }
     },
 
-    onError: (err, taskId, context) => {
+    onError: (_err, _taskId, context) => {
       if (context?.previousTasks) {
         queryClient.setQueryData(kanbanKeys.tasks(), context.previousTasks)
       }
@@ -229,7 +234,7 @@ export function useMoveTask() {
       return { previousTasks }
     },
 
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       if (context?.previousTasks) {
         queryClient.setQueryData(kanbanKeys.tasks(), context.previousTasks)
       }
